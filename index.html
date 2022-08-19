@@ -49,12 +49,34 @@
 
   <script>
     const snapId = `local:${window.location.href}`;
+    let address = '';
 
     const connectButton = document.querySelector('button.connect');
-    const sendButton = document.querySelector('button.send')
-
     connectButton.addEventListener('click', connect);
+    
+    const sendButton = document.querySelector('button.send')
     sendButton.addEventListener('click', send)
+    
+    async function handleAccountChange() {
+      const balance = await ethereum.request({
+        method: 'wallet_invokeSnap',
+        params: [snapId, { 
+          method: 'klay_getBalance', 
+          params: { address } 
+        }], 
+      });
+      document.getElementById('address').innerHTML = address;
+      document.getElementById('balance').innerHTML = balance;
+    }
+
+    ethereum.on('accountsChanged', async (accounts) => {
+      address = accounts[0];
+      handleAccountChange();
+    });
+    ethereum.on('chainChanged', async (_chainId) => {
+      console.log(`Change into ${_chainId}`);
+      handleAccountChange();
+    });
 
     async function connect() {
       try {
@@ -67,19 +89,12 @@
           ],
         });
 
-        const address = await ethereum.request({
-          method: 'wallet_invokeSnap',
-          params: [snapId, { method: 'klay_getAddress' }],
+        await ethereum.request({ method: 'eth_requestAccounts' }).then(accounts => {
+          address = accounts[0];
+          handleAccountChange();
         });
-        const balance = await ethereum.request({
-          method: 'wallet_invokeSnap',
-          params: [snapId, { method: 'klay_getBalance' }], 
-        });
-
-        document.getElementById('address').innerHTML = address;
-        document.getElementById('balance').innerHTML = balance;
       } catch (err) {
-        alert('Connect error: ' + err.message || err);
+        console.error('Connect error: ' + err.message || err);
       }
     }
 
@@ -89,13 +104,20 @@
 
       const sendSuccess = await ethereum.request({
         method: 'wallet_invokeSnap',
-        params: [snapId, { method: 'klay_sendToken', params: { to: sendAddr, value: amount } }]
+        params: [snapId, { 
+          method: 'klay_sendToken', 
+          params: { 
+            from: address, 
+            to: sendAddr, 
+            value: amount 
+          } 
+        }]
       });
 
       if (sendSuccess) {
         const balance = await ethereum.request({
           method: 'wallet_invokeSnap',
-          params: [snapId, { method: 'klay_getBalance' }], 
+          params: [snapId, { method: 'klay_getBalance', params: { address } }], 
         });
         document.getElementById('balance').innerHTML = balance;
         alert('Send success');

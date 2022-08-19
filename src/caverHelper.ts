@@ -16,26 +16,44 @@ export const toHex = (value: string): string => {
 export const caver = new Caver('https://public-node-api.klaytnapi.com/v1/baobab');
 
 export const getBalance = async (address: string): Promise<string> => {
-    const balance = await caver.klay.getBalance(address);
-    return fromPeb(balance, 'KLAY');
+    const isExisted = await caver.rpc.klay.accountCreated(address);
+    
+    if (isExisted) {
+        const balance = await caver.klay.getBalance(address);
+        return fromPeb(balance, 'KLAY');
+    }
+    return "NaN";
 }
 
-export const sendToken = async (from: BIP44Node, to: string, value: string): Promise<void> => {
-    const keyring: SingleKeyring = caver.wallet.keyring.create(from.address, from.privateKey);
-    caver.wallet.add(keyring);
+export const sendToken = async (from: string, to: string, value: string): Promise<void> => {
+    try {
+        const txn = { from, to, value: toPeb(value, 'KLAY') };
+        const gas = await caver.rpc.klay.estimateGas(txn);
+        const valueTransfer: ValueTransfer = caver.transaction.valueTransfer.create({ ...txn, gas });
+        await valueTransfer.fillTransaction();
+
+        await caver.wallet.sign(from, valueTransfer);
+        const rlpEncoded = valueTransfer.getRLPEncoding();
+        await caver.rpc.klay.sendRawTransaction(rlpEncoded);
+    } catch (err) {
+        console.error(err.message);
+    }
     
-    const amountToSend = toHex(toPeb(value, 'KLAY'));
-    const gas = toHex(toPeb(30000, 'peb'));
+    // const keyring: SingleKeyring = caver.wallet.keyring.create(from.address, from.privateKey);
+    // caver.wallet.add(keyring);
+    
+    // const amountToSend = toHex(toPeb(value, 'KLAY'));
+    // const gas = toHex(toPeb(30000, 'peb'));
 
-    const valueTransfer: ValueTransfer = caver.transaction.valueTransfer.create({
-        from: from.address, 
-        to: to, 
-        value: amountToSend, 
-        gas: gas
-    })
-    await valueTransfer.fillTransaction();
-    await caver.wallet.sign(keyring.address, valueTransfer);
+    // const valueTransfer: ValueTransfer = caver.transaction.valueTransfer.create({
+    //     from: from.address, 
+    //     to: to, 
+    //     value: amountToSend, 
+    //     gas: gas
+    // })
+    // await valueTransfer.fillTransaction();
+    // await caver.wallet.sign(keyring.address, valueTransfer);
 
-    const rlpEncoded = valueTransfer.getRLPEncoding();
-    await caver.rpc.klay.sendRawTransaction(rlpEncoded);
+    // const rlpEncoded = valueTransfer.getRLPEncoding();
+    // await caver.rpc.klay.sendRawTransaction(rlpEncoded);
 }
