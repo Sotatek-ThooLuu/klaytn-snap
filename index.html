@@ -27,7 +27,7 @@
     </details>
     <br />
 
-    <button class="connect" style="margin-bottom: 1rem">Connect</button>
+    <button class="connect">Connect</button>
     <div>
       <div>
         <span>Address: </span>
@@ -39,89 +39,44 @@
       </div>
     </div>
 
+    <!-- Account -->
+    <hr/>
     <div>
-      <label for="sendAddr">Send to: </label>
-      <input type="text" id="sendAddr"/>
-      <label for="amount">Amount: </label>
-      <input type="text" id="amount">
-      <button class="send">Send</button>
+      <div>
+        caver.account<br/>
+        Account Key: <span id="accountKey"> </span>
+        <ul>
+          <li>
+            <div style="display: grid; grid-template-columns: 13rem auto;">
+              RLPEncoding:
+              <div>
+                <input type="text" placeholder="RLP Encoded" id="inputRlpEncoded"/>
+                <button class="createFromRLPEncoding">Confirm</button>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div style="display: grid; grid-template-columns: 13rem auto;">
+              accountKeyLegacy:
+              <div>
+                <button class="createWithAccountKeyLegacy">Confirm</button>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div style="display: grid; grid-template-columns: 13rem auto;">
+              accountKeyPublic:
+              <div>
+                <input type="text" placeholder="Public Key" id="inputKeyPublic"/>
+                <button class="createWithAccountKeyPublic">Confirm</button>
+              </div>
+            </div>
+          </li>
+          <li>accountKeyFail</li>
+          <li>accountKeyWeightedMultiSig</li>
+          <li>accountKeyRoleBased</li>
+        </ul>
+      </div>
     </div>
-
-  <script>
-    const snapId = `local:${window.location.href}`;
-    let address = '';
-
-    const connectButton = document.querySelector('button.connect');
-    connectButton.addEventListener('click', connect);
-    
-    const sendButton = document.querySelector('button.send')
-    sendButton.addEventListener('click', send)
-    
-    async function handleAccountChange() {
-      const balance = await ethereum.request({
-        method: 'wallet_invokeSnap',
-        params: [snapId, { 
-          method: 'klay_getBalance', 
-          params: { address } 
-        }], 
-      });
-      document.getElementById('address').innerHTML = address;
-      document.getElementById('balance').innerHTML = balance;
-    }
-
-    ethereum.on('accountsChanged', async (accounts) => {
-      address = accounts[0];
-      handleAccountChange();
-    });
-    ethereum.on('chainChanged', async (_chainId) => {
-      console.log(`Change into ${_chainId}`);
-      handleAccountChange();
-    });
-
-    async function connect() {
-      try {
-        await ethereum.request({
-          method: 'wallet_enable',
-          params: [
-            {
-              wallet_snap: { [snapId]: {} },
-            },
-          ],
-        });
-
-        await ethereum.request({ method: 'eth_requestAccounts' }).then(accounts => {
-          address = accounts[0];
-          handleAccountChange();
-        });
-      } catch (err) {
-        console.error('Connect error: ' + err.message || err);
-      }
-    }
-
-    async function send() {
-      const sendAddr = document.getElementById('sendAddr').value;
-      const amount = document.getElementById('amount').value;
-
-      const sendSuccess = await ethereum.request({
-        method: 'wallet_invokeSnap',
-        params: [snapId, { 
-          method: 'klay_sendToken', 
-          params: { 
-            from: address, 
-            to: sendAddr, 
-            value: amount 
-          } 
-        }]
-      });
-
-      if (sendSuccess) {
-        const balance = await ethereum.request({
-          method: 'wallet_invokeSnap',
-          params: [snapId, { method: 'klay_getBalance', params: { address } }], 
-        });
-        document.getElementById('balance').innerHTML = balance;
-        alert('Send success');
-      } else alert('Send fail');
-    }
-  </script>
+  <script src="index.js"></script>
 </html>
