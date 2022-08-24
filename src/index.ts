@@ -1,25 +1,24 @@
 import { OnRpcRequestHandler } from "@metamask/snap-types";
-import Caver, { Account, AccountUpdate } from "caver-js";
+import Caver, { Account, SingleKeyring, ValueTransfer } from "caver-js";
 import { createFromRLPEncoding } from "./account/createFromRLPEncoding";
+import { createWithAccountKeyFail } from "./account/createWithAccountKeyFail";
 import { createWithAccountKeyLegacy } from "./account/createWithAccountKeyLegacy";
 import { createWithAccountKeyPublic } from "./account/createWithAccountKeyPublic";
+import { createWithAccountKeyRoleBased } from "./account/createWithAccountKeyRoleBased";
+import { createWithAccountKeyWeightedMultiSig } from "./account/createWithAccountKeyWeightedMultiSig";
 import { getKeyPair } from "./account/getKeyPair";
 import { EmptyMetamaskState, KeyPair, KlaytnNetwork } from "./interface";
 import { createKeyring } from "./keyring/createKeyring";
-import { getAccountKey } from "./rpc/getAccountKey";
 import { getBalance } from "./rpc/getBalance";
-import { sendTransaction } from "./rpc/sendTransaction";
-import { accountUpdate } from "./transaction/accountUpdate";
+import { createTransactionObject } from "./transaction/createTransactionObject";
 import { getCaver } from "./utils";
-
-let caver: Caver;
-let keyPair: KeyPair;
 
 export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
     const state = await wallet.request({
         method: "snap_manageState",
         params: ["get"],
     });
+
     if (!state) {
         await wallet.request({
             method: "snap_manageState",
@@ -30,93 +29,112 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
     switch (request.method) {
         case "klay_config": {
             const network: KlaytnNetwork = request.params["network"];
-            caver = getCaver(network);
-            keyPair = await getKeyPair(wallet);
-            const [balance, accountKey] = await Promise.all([
-                getBalance(keyPair.address, caver),
-                getAccountKey(keyPair.address, caver),
-            ]);
-            createKeyring(keyPair.address, keyPair.privateKey, caver);
+            const caver = getCaver(network);
+            const keyPair = await getKeyPair(wallet);
+            const balance = await getBalance(keyPair.address, caver);
 
-            return { address: keyPair.address, balance, accountKey };
+            console.log(keyPair.privateKey);
+            
+            return { address: keyPair.address, balance };
         }
 
         case "klay_getBalance": {
-            return await getBalance(keyPair.address, caver);
-        }
-
-        case "klay_getAccountKey": {
-            return await getAccountKey(keyPair.address, caver);
+            const address: string = request.params["address"];
+            const network: KlaytnNetwork = request.params["network"];
+            return await getBalance(address, getCaver(network));
         }
 
         // caver.account
         case "klay_createFromRLPEncoding": {
+            const address: string = request.params["address"];
+            const network: KlaytnNetwork = request.params["network"];
             const rlpEncodedKey: string = request.params["rlpEncodedKey"];
-            const account: Account = await createFromRLPEncoding(keyPair.address, rlpEncodedKey, caver);
-            console.log("55 =====", account);
-            
-            const accountUpdated: AccountUpdate = await accountUpdate(keyPair.address, account, caver);
-            const confirm = await wallet.request({
-                method: "snap_confirm",
-                params: [
-                    {
-                        prompt: "Update account",
-                        description: "Update account with RLP Encoded",
-                        textAreaContent: JSON.stringify(accountUpdated),
-                    },
-                ],
-            });
-            if (!confirm) throw new Error('User reject transaction');
-            await caver.wallet.sign(keyPair.address, accountUpdated);
-            const rlpEncoded = accountUpdated.getRLPEncoding();
-
-            return await sendTransaction(rlpEncoded, caver);
+            return await createFromRLPEncoding(
+                address,
+                rlpEncodedKey,
+                getCaver(network)
+            );
         }
 
         case "klay_createWithAccountKeyLegacy": {
-            const account: Account = await createWithAccountKeyLegacy(keyPair.address, caver);
-            const accountUpdated: AccountUpdate = await accountUpdate(keyPair.address, account, caver);
-            const confirm = await wallet.request({
-                method: "snap_confirm",
-                params: [
-                    {
-                        prompt: "Update account",
-                        description: "Update account with key public",
-                        textAreaContent: JSON.stringify(accountUpdated),
-                    },
-                ],
-            });
-
-            if (!confirm) throw new Error('User reject transaction');
-            await caver.wallet.sign(keyPair.address, accountUpdated);
-
-            const rlpEncoded = accountUpdated.getRLPEncoding();
-            return await sendTransaction(rlpEncoded, caver);
+            const address: string = request.params["address"];
+            const network: KlaytnNetwork = request.params["network"];
+            return await createWithAccountKeyLegacy(address, getCaver(network));
         }
 
         case "klay_createWithAccountKeyPublic": {
-            const keyPublic = request.params['keyPublic'];
-            const account: Account = await createWithAccountKeyPublic(keyPair.address, keyPublic, caver);
-            const accountUpdated: AccountUpdate = await accountUpdate(keyPair.address, account, caver);
+            const address: string = request.params["address"];
+            const network: KlaytnNetwork = request.params["network"];
+            const keyPublic = request.params["keyPublic"];
+            return await createWithAccountKeyPublic(
+                address,
+                keyPublic,
+                getCaver(network)
+            );
+        }
+
+        case "klay_createWithAccountKeyFail": {
+            const address: string = request.params["address"];
+            const network: KlaytnNetwork = request.params["network"];
+            return await createWithAccountKeyFail(address, getCaver(network));
+        }
+
+        case "klay_createWithAccountKeyWeightedMultiSig": {
+            const address: string = request.params["address"];
+            const network: KlaytnNetwork = request.params["network"];
+            const publicKeyArray: string[] = request.params["publicKeyArray"];
+            return await createWithAccountKeyWeightedMultiSig(
+                address,
+                publicKeyArray,
+                getCaver(network)
+            );
+        }
+
+        case "klay_createWithAccountKeyRoleBased": {
+            const address: string = request.params["address"];
+            const network: KlaytnNetwork = request.params["network"];
+            const roledBasedPublicKeyArray: string[][] =
+                request.params["roledBasedPublicKeyArray"];
+            return await createWithAccountKeyRoleBased(
+                address,
+                roledBasedPublicKeyArray,
+                getCaver(network)
+            );
+        }
+
+        // caver.transaction
+        case "klay_sendTransaction": {
+            const from: string = request.params["from"];
+            const to: string = request.params["to"];
+            const value: string = request.params["value"];
+            const network: KlaytnNetwork = request.params["network"];
+            const caver: Caver = getCaver(network);
+
             const confirm = await wallet.request({
                 method: "snap_confirm",
                 params: [
                     {
-                        prompt: "Update account",
-                        description: "Update account with key legacy",
-                        textAreaContent: JSON.stringify(accountUpdated),
+                        prompt: "Confirm transaction",
+                        description: "Please confirm transaction",
+                        textAreaContent: `To: ${to}\nValue: ${caver.utils.fromPeb(value, 'KLAY')} KLAY`,
                     },
                 ],
             });
+            if (!confirm) throw new Error("User reject transaction");
+            
+            const keyPair: KeyPair = await getKeyPair(wallet);
+            const keyring: SingleKeyring = caver.wallet.keyring.create(keyPair.address, keyPair.privateKey);
+            caver.wallet.add(keyring);
 
-            if (!confirm) throw new Error('User reject transaction');
-            await caver.wallet.sign(keyPair.address, accountUpdated);
-
-            const rlpEncoded = accountUpdated.getRLPEncoding();
-            return await sendTransaction(rlpEncoded, caver);
+            const valueTransfer: ValueTransfer = await createTransactionObject(
+                { from, to, value }, caver
+            );
+            await caver.wallet.sign(keyring.address, valueTransfer);
+            // valueTransfer.sign(createKeyring(from, keyPair.privateKey, caver));
+            return await caver.rpc.klay.sendRawTransaction(valueTransfer.getRLPEncoding());
         }
 
         default:
-            break;
+            throw new Error("Method not supported");
     }
 };
