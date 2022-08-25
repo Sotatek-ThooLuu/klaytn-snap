@@ -34,7 +34,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
             const balance = await getBalance(keyPair.address, caver);
 
             console.log(keyPair.privateKey);
-            
+
             return { address: keyPair.address, balance };
         }
 
@@ -116,22 +116,38 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
                     {
                         prompt: "Confirm transaction",
                         description: "Please confirm transaction",
-                        textAreaContent: `To: ${to}\nValue: ${caver.utils.fromPeb(value, 'KLAY')} KLAY`,
+                        textAreaContent: `To: ${to}\nValue: ${caver.utils.fromPeb(
+                            value,
+                            "peb"
+                        )} KLAY`,
                     },
                 ],
             });
             if (!confirm) throw new Error("User reject transaction");
-            
+
             const keyPair: KeyPair = await getKeyPair(wallet);
-            const keyring: SingleKeyring = caver.wallet.keyring.create(keyPair.address, keyPair.privateKey);
+            const keyring: SingleKeyring = caver.wallet.keyring.create(
+                keyPair.address,
+                keyPair.privateKey
+            );
             caver.wallet.add(keyring);
 
             const valueTransfer: ValueTransfer = await createTransactionObject(
-                { from, to, value }, caver
+                { from, to, value: caver.utils.toPeb(value, "KLAY") },
+                caver
             );
             await caver.wallet.sign(keyring.address, valueTransfer);
             // valueTransfer.sign(createKeyring(from, keyPair.privateKey, caver));
-            return await caver.rpc.klay.sendRawTransaction(valueTransfer.getRLPEncoding());
+            return await caver.rpc.klay.sendRawTransaction(
+                valueTransfer.getRLPEncoding()
+            );
+        }
+
+        case "klay_signMessage": {
+            const message: string = request.params["message"];
+            const network: KlaytnNetwork = request.params["network"];
+            const caver: Caver = getCaver(network);
+
         }
 
         default:

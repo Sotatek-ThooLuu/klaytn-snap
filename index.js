@@ -197,7 +197,36 @@ sendTransactionButton.addEventListener("click", async () => {
                 },
             ],
         });
-        document.getElementById("transactionReceipt").innerText = receipt;
+        const balance = await ethereum.request({
+            method: "wallet_invokeSnap",
+            params: [
+                snapId,
+                { method: "klay_getBalance", params: { address, network } },
+            ],
+        });
+        document.getElementById("transactionReceipt").innerText =
+            JSON.stringify(receipt);
+        document.getElementById("balance").innerText = balance;
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+const signMessageButton = document.querySelector("button.signMessage");
+signMessageButton.addEventListener("click", async () => {
+    const message = document.getElementById("inputMessage").value;
+    try {
+        const receipt = await ethereum.request({
+            method: "wallet_invokeSnap",
+            params: [
+                snapId,
+                {
+                    method: "klay_signMessage",
+                    params: { message, network },
+                },
+            ],
+        });
+        document.getElementById("transactionReceipt").innerText = JSON.stringify(receipt);
     } catch (err) {
         console.error(err.message);
     }
