@@ -142,14 +142,16 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
                 valueTransfer.getRLPEncoding()
             );
         }
-
+        
         case "klay_signMessage": {
-            const message: string = request.params["message"];
-            const network: KlaytnNetwork = request.params["network"];
-            const caver: Caver = getCaver(network);
-
+          const network: KlaytnNetwork = request.params["network"];
+          const message: string = request.params["message"];
+          const caver = getCaver(network);
+          const keyPair: KeyPair = await getKeyPair(wallet);
+          const keyring: SingleKeyring = caver.wallet.keyring.create(keyPair.address, keyPair.privateKey);
+          caver.wallet.add(keyring);
+          return caver.wallet.signMessage(keyPair.address, message, caver.wallet.keyring.role.roleTransactionKey);
         }
-
         default:
             throw new Error("Method not supported");
     }

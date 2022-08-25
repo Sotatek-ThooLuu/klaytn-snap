@@ -212,11 +212,10 @@ sendTransactionButton.addEventListener("click", async () => {
     }
 });
 
-const signMessageButton = document.querySelector("button.signMessage");
-signMessageButton.addEventListener("click", async () => {
+document.getElementById("signMessageBtn").onclick = async () => {
     const message = document.getElementById("inputMessage").value;
     try {
-        const receipt = await ethereum.request({
+        const signature = await ethereum.request({
             method: "wallet_invokeSnap",
             params: [
                 snapId,
@@ -226,8 +225,8 @@ signMessageButton.addEventListener("click", async () => {
                 },
             ],
         });
-        document.getElementById("transactionReceipt").innerText = JSON.stringify(receipt);
-    } catch (err) {
-        console.error(err.message);
+        document.getElementById("signature").innerText = JSON.stringify(signature);
+    } catch (error) {
+        console.error(error.message);
     }
-});
+};
