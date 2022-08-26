@@ -3,7 +3,7 @@ import {
     JsonBIP44CoinTypeNode,
 } from "@metamask/key-tree";
 import { SnapProvider } from "@metamask/snap-types";
-import { KeyPair, MetamaskState } from "../interface";
+import { KeyPair, MetamaskState } from "./interface";
 
 export async function getKeyPair(wallet: SnapProvider): Promise<KeyPair> {
     const state = (await wallet.request({

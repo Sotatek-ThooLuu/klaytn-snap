@@ -1,9 +1,13 @@
 import Caver from "caver-js";
-import { KlaytnNetwork } from "../interface";
+import { KlaytnNetwork } from "./interface";
 
-export const mainnet = new Caver("https://public-node-api.klaytnapi.com/v1/cypress");
+export const mainnet: Caver = new Caver(
+    "https://public-node-api.klaytnapi.com/v1/cypress"
+);
 
-export const testnet = new Caver("https://public-node-api.klaytnapi.com/v1/baobab");
+export const testnet: Caver = new Caver(
+    "https://public-node-api.klaytnapi.com/v1/baobab"
+);
 
 export function getCaver(network: KlaytnNetwork): Caver {
     switch (network) {

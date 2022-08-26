@@ -27,20 +27,20 @@
     </details>
     <br />
 
-    <button class="connect">Connect</button>
+    <button id="connectButton">Connect</button>
     <div>
       <div>
         <span>Address: </span>
-        <span id="address"></span>
+        <span id="addressSpan"></span>
       </div>
       <div>
         <span>Balance: </span>
-        <span id="balance"></span>
+        <span id="balanceSpan"></span>
       </div>
     </div>
 
     <!-- Account -->
-    <hr/>
+    <!-- <hr/>
     <div>
       <div>
         caver.account<br/>
@@ -49,62 +49,63 @@
             <div style="display: grid; grid-template-columns: 13rem auto;">
               RLPEncoding:
               <div>
-                <input type="text" placeholder="RLP Encoded" id="inputRlpEncoded"/>
-                <button class="createFromRLPEncoding">Create</button>
+                <input type="text" placeholder="RLP Encoded" id="rlpEncodedInput"/>
+                <button id="rlpEncodedInputButton">Create</button>
               </div>
             </div>
-            <code id="RLPEncodingRes"> </code>
+            <code id="rlpEncodedCode"> </code>
           </li>
           <li>
             <div style="display: grid; grid-template-columns: 13rem auto;">
               accountKeyLegacy:
               <div>
-                <button class="createWithAccountKeyLegacy">Create</button>
+                <button id="accountKeyLegacyButton">Create</button>
               </div>
             </div>
-            <code id="accountKeyLegacyRes"> </code>
+            <code id="accountKeyLegacyCode"> </code>
           </li>
           <li>
             <div style="display: grid; grid-template-columns: 13rem auto;">
               accountKeyPublic:
               <div>
-                <input type="text" placeholder="Public Key" id="inputKeyPublic"/>
-                <button class="createWithAccountKeyPublic">Create</button>
+                <input type="text" placeholder="Public Key" id="accountKeyPublicInput"/>
+                <button id="accountKeyPublicButton">Create</button>
               </div>
             </div>
-            <code id="accountKeyPublicRes"> </code>
+            <code id="accountKeyPublicCode"> </code>
           </li>
           <li>
             <div style="display: grid; grid-template-columns: 13rem auto;">
               accountKeyFail:
               <div>
-                <button class="createWithAccountKeyFail">Create</button>
+                <button id="accountKeyFailButton">Create</button>
               </div>
             </div>
-            <code id="accountKeyFailRes"> </code>
+            <code id="accountKeyFailCode"> </code>
           </li>
           <li>
             <div style="display: grid; grid-template-columns: 13rem auto;">
               accountKeyWeightedMultiSig:
               <div>
-                <input type="text" placeholder="Public Key Array" id="inputKeyWeightedMultiSig"/>
-                <button class="createWithAccountKeyWeightedMultiSig">Create</button>
+                <input type="text" placeholder="Public Key Array" id="accountKeyWeightedMultiSigInput"/>
+                <button id="accountKeyWeightedMultiSigButton">Create</button>
               </div>
             </div>
-            <code id="accountKeyWeightedMultiSigRes"> </code>
+            <code id="accountKeyWeightedMultiSigCode"> </code>
           </li>
           <li>
             <div style="display: grid; grid-template-columns: 13rem auto;">
               accountKeyRoleBased:
               <div>
-                <input type="text" placeholder="Roled-based Public Key Array" id="inputKeyRoleBased"/>
-                <button class="createWithAccountKeyRoleBased">Create</button>
+                <input type="text" placeholder="Roled-based Public Key Array" id="accountKeyRoleBasedInput"/>
+                <button id="accountKeyRoleBasedButton">Create</button>
               </div>
             </div>
-            <code id="accountKeyRoleBasedRes"> </code></li>
+            <code id="accountKeyRoleBasedCode"></code>
+          </li>
         </ul>
       </div>
-    </div>
+    </div> -->
 
     <!-- transaction -->
     <hr/>
@@ -116,22 +117,22 @@
             <div style="display: grid; grid-template-columns: 13rem auto;">
               Send transaction:
               <div>
-                <input type="text" placeholder="To address" id="inputToAddress"/>
-                <input type="text" placeholder="Amount" id="inputAmount"/>
-                <button class="sendTransaction">Send</button>
+                <input type="text" placeholder="To address" id="toAddressInput"/>
+                <input type="text" placeholder="Amount" id="amountInput"/>
+                <button id="sendButton">Send</button>
               </div>
             </div>
-            <code id="transactionReceipt"> </code>
+            <code id="transactionReceiptCode"> </code>
           </li>
           <li>
             <div style="display: grid; grid-template-columns: 13rem auto;">
               Sign message:
               <div>
-                <input type="text" placeholder="Message" id="inputMessage"/>
-                <button id="signMessageBtn">Sign</button>
+                <input type="text" placeholder="Message" id="messageInput"/>
+                <button id="signButton">Sign</button>
               </div>
             </div>
-            <code id="signature"></code>
+            <code id="signedMessageCode"></code>
           </li>
         </ul>
       </div>
