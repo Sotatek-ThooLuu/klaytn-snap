@@ -5,7 +5,6 @@ import { getCaver } from "./caver";
 import { EmptyMetamaskState, KeyPair, KlaytnNetwork } from "./interface";
 import { getBalance } from "./rpc";
 import { sendTransaction } from "./transaction";
-import { fromPeb } from "./utils";
 import { signMessage } from "./wallet";
 
 export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
@@ -116,11 +115,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
                     {
                         prompt: "Confirm transaction",
                         description: "Please confirm transaction",
-                        textAreaContent: `To: ${to}\nValue: ${fromPeb(
-                            caver,
-                            value,
-                            "peb"
-                        )} KLAY`,
+                        textAreaContent: `To: ${to}\nValue: ${value} KLAY`,
                     },
                 ],
             });
@@ -144,7 +139,11 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
                 ],
             });
             if (!confirm) throw new Error("User reject sign message");
-            return await signMessage(caver, message, caver.wallet.keyring.role.roleTransactionKey);
+            return await signMessage(
+                caver,
+                message,
+                caver.wallet.keyring.role.roleTransactionKey
+            );
         }
         default:
             throw new Error("Method not supported");

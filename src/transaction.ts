@@ -5,7 +5,6 @@ import Caver, {
 } from "caver-js";
 import { getKeyPair } from "./account";
 import { KeyPair } from "./interface";
-import { estimateGas } from "./rpc";
 import { createKeyring } from "./wallet";
 
 export async function sendTransaction(
