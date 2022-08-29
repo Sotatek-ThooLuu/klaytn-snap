@@ -10,7 +10,6 @@
 //     handleAccountChange();
 // });
 
-let address = "";
 let network = "baobab";
 const snapId = `local:${window.location.href}`;
 
@@ -21,14 +20,22 @@ document.getElementById("connectButton").onclick = async () => {
             params: [{ wallet_snap: { [snapId]: {} } }],
         });
 
-        const resp = await ethereum.request({
-            method: "wallet_invokeSnap",
-            params: [snapId, { method: "klay_config", params: { network } }],
-        });
+        const [address, balance] = await Promise.all([
+            ethereum.request({
+                method: "wallet_invokeSnap",
+                params: [snapId, { method: "klay_getAddress" }],
+            }),
+            ethereum.request({
+                method: "wallet_invokeSnap",
+                params: [
+                    snapId,
+                    { method: "klay_getBalance", params: { network } },
+                ],
+            }),
+        ]);
 
-        address = resp.address;
         document.getElementById("addressSpan").innerText = address;
-        document.getElementById("balanceSpan").innerText = resp.balance;
+        document.getElementById("balanceSpan").innerText = balance;
     } catch (err) {
         console.error("Connect error: " + err.message || err);
     }
@@ -191,7 +198,7 @@ document.getElementById("sendButton").onclick = async () => {
                 snapId,
                 {
                     method: "klay_sendTransaction",
-                    params: { from: address, to, value, network },
+                    params: { to, value, network },
                 },
             ],
         });
@@ -199,7 +206,7 @@ document.getElementById("sendButton").onclick = async () => {
             method: "wallet_invokeSnap",
             params: [
                 snapId,
-                { method: "klay_getBalance", params: { address, network } },
+                { method: "klay_getBalance", params: { network } },
             ],
         });
         document.getElementById("transactionReceiptCode").innerText =
@@ -223,7 +230,8 @@ document.getElementById("signButton").onclick = async () => {
                 },
             ],
         });
-        document.getElementById("signedMessageCode").innerText = JSON.stringify(signedMessage);
+        document.getElementById("signedMessageCode").innerText =
+            JSON.stringify(signedMessage);
     } catch (error) {
         console.error(error.message);
     }

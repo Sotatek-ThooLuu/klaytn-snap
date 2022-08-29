@@ -1,11 +1,12 @@
 import { OnRpcRequestHandler } from "@metamask/snap-types";
 import Caver from "caver-js";
-import { getKeyPair } from "./account";
+import { getAddress, getKeyPair } from "./account";
 import { getCaver } from "./caver";
 import { EmptyMetamaskState, KeyPair, KlaytnNetwork } from "./interface";
 import { getBalance } from "./rpc";
 import { sendTransaction } from "./transaction";
 import { signMessage } from "./wallet";
+// import { signMessage } from "./wallet";
 
 export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
     const state = await wallet.request({
@@ -21,26 +22,24 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
     }
 
     switch (request.method) {
-        case "klay_config": {
-            const network: KlaytnNetwork = request.params["network"];
-            const caver = getCaver(network);
-            const keyPair = await getKeyPair(wallet);
-            const balance = await getBalance(caver, keyPair.address);
+        // case "klay_config": {
+        //     const network: KlaytnNetwork = request.params["network"];
+        //     const caver = getCaver(network);
+        //     const keyPair = await getKeyPair(wallet);
+        //     const balance = await getBalance(caver, keyPair.address);
 
-            console.log(keyPair.privateKey);
+        //     console.log(keyPair.privateKey);
 
-            return { address: keyPair.address, balance };
-        }
+        //     return { address: keyPair.address, balance };
+        // }
 
         case "klay_getAddress": {
-            const keyPair: KeyPair = await getKeyPair(wallet);
-            return keyPair.address;
+            return getAddress();
         }
 
         case "klay_getBalance": {
-            const address: string = request.params["address"];
             const network: KlaytnNetwork = request.params["network"];
-            return await getBalance(getCaver(network), address);
+            return await getBalance(network);
         }
 
         // // caver.account
@@ -103,47 +102,18 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
 
         // caver.transaction
         case "klay_sendTransaction": {
-            const from: string = request.params["from"];
             const to: string = request.params["to"];
             const value: string = request.params["value"];
             const network: KlaytnNetwork = request.params["network"];
-            const caver: Caver = getCaver(network);
 
-            const confirm = await wallet.request({
-                method: "snap_confirm",
-                params: [
-                    {
-                        prompt: "Confirm transaction",
-                        description: "Please confirm transaction",
-                        textAreaContent: `To: ${to}\nValue: ${value} KLAY`,
-                    },
-                ],
-            });
-            if (!confirm) throw new Error("User reject transaction");
-            return await sendTransaction(caver, from, to, value);
+            return await sendTransaction(network, to, value);
         }
 
         case "klay_signMessage": {
             const network: KlaytnNetwork = request.params["network"];
             const message: string = request.params["message"];
-            const caver = getCaver(network);
 
-            const confirm = await wallet.request({
-                method: "snap_confirm",
-                params: [
-                    {
-                        prompt: "Confirm sign message",
-                        description: "Please confirm sign message",
-                        textAreaContent: `Message: ${message}`,
-                    },
-                ],
-            });
-            if (!confirm) throw new Error("User reject sign message");
-            return await signMessage(
-                caver,
-                message,
-                caver.wallet.keyring.role.roleTransactionKey
-            );
+            return await signMessage(network, message);
         }
         default:
             throw new Error("Method not supported");
