@@ -22,16 +22,9 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
     }
 
     switch (request.method) {
-        // case "klay_config": {
-        //     const network: KlaytnNetwork = request.params["network"];
-        //     const caver = getCaver(network);
-        //     const keyPair = await getKeyPair(wallet);
-        //     const balance = await getBalance(caver, keyPair.address);
-
-        //     console.log(keyPair.privateKey);
-
-        //     return { address: keyPair.address, balance };
-        // }
+        case "klay_config": {
+            return EmptyMetamaskState();
+        }
 
         case "klay_getAddress": {
             return getAddress();
