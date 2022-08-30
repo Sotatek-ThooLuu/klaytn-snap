@@ -41,151 +41,132 @@ document.getElementById("connectButton").onclick = async () => {
     }
 };
 
-// /* ----- Account ----- */
-// const createFromRLPEncodingButton = document.querySelector(
-//     "button.createFromRLPEncoding"
-// );
-// createFromRLPEncodingButton.addEventListener("click", async () => {
-//     const rlpEncodedKey = document.getElementById("inputRlpEncoded").value;
-//     try {
-//         const account = await ethereum.request({
-//             method: "wallet_invokeSnap",
-//             params: [
-//                 snapId,
-//                 {
-//                     method: "klay_createFromRLPEncoding",
-//                     params: { address, network, rlpEncodedKey },
-//                 },
-//             ],
-//         });
-//         document.getElementById("RLPEncodingRes").innerText =
-//             JSON.stringify(account);
-//     } catch (err) {
-//         console.error(err.message);
-//     }
-// });
+/* ----- Account ----- */
+document.getElementById("rlpEncodedButton").onclick = async () => {
+    const rlpEncodedKey = document.getElementById("rlpEncodedInput").value;
+    try {
+        const account = await ethereum.request({
+            method: "wallet_invokeSnap",
+            params: [
+                snapId,
+                {
+                    method: "klay_createFromRLPEncoding",
+                    params: { network, rlpEncodedKey },
+                },
+            ],
+        });
+        document.getElementById("rlpEncodedCode").innerText =
+            JSON.stringify(account);
+    } catch (err) {
+        console.error(err.message);
+    }
+};
 
-// const createWithAccountKeyLegacyButton = document.querySelector(
-//     "button.createWithAccountKeyLegacy"
-// );
-// createWithAccountKeyLegacyButton.addEventListener("click", async () => {
-//     try {
-//         const account = await ethereum.request({
-//             method: "wallet_invokeSnap",
-//             params: [
-//                 snapId,
-//                 {
-//                     method: "klay_createWithAccountKeyLegacy",
-//                     params: { address, network },
-//                 },
-//             ],
-//         });
-//         document.getElementById("accountKeyLegacyRes").innerText =
-//             JSON.stringify(account);
-//     } catch (err) {
-//         console.error(err.message);
-//     }
-// });
+document.getElementById("accountKeyLegacyButton").onclick = async () => {
+    try {
+        const account = await ethereum.request({
+            method: "wallet_invokeSnap",
+            params: [
+                snapId,
+                {
+                    method: "klay_createWithAccountKeyLegacy",
+                    params: { network },
+                },
+            ],
+        });
+        document.getElementById("accountKeyLegacyCode").innerText =
+            JSON.stringify(account);
+    } catch (err) {
+        console.error(err.message);
+    }
+};
 
-// const createWithAccountKeyPublicButton = document.querySelector(
-//     "button.createWithAccountKeyPublic"
-// );
-// createWithAccountKeyPublicButton.addEventListener("click", async () => {
-//     const keyPublic = document.getElementById("inputKeyPublic").value;
-//     try {
-//         const account = await ethereum.request({
-//             method: "wallet_invokeSnap",
-//             params: [
-//                 snapId,
-//                 {
-//                     method: "klay_createWithAccountKeyPublic",
-//                     params: { address, network, keyPublic },
-//                 },
-//             ],
-//         });
-//         document.getElementById("accountKeyPublicRes").innerText =
-//             JSON.stringify(account);
-//     } catch (err) {
-//         console.error(err.message);
-//     }
-// });
+document.getElementById("accountKeyPublicButton").onclick = async () => {
+    const keyPublic = document.getElementById("accountKeyPublicInput").value;
+    try {
+        const account = await ethereum.request({
+            method: "wallet_invokeSnap",
+            params: [
+                snapId,
+                {
+                    method: "klay_createWithAccountKeyPublic",
+                    params: { network, keyPublic },
+                },
+            ],
+        });
+        document.getElementById("accountKeyPublicCode").innerText =
+            JSON.stringify(account);
+    } catch (err) {
+        console.error(err.message);
+    }
+};
 
-// const createWithAccountKeyFailButton = document.querySelector(
-//     "button.createWithAccountKeyFail"
-// );
-// createWithAccountKeyFailButton.addEventListener("click", async () => {
-//     try {
-//         const account = await ethereum.request({
-//             method: "wallet_invokeSnap",
-//             params: [
-//                 snapId,
-//                 {
-//                     method: "klay_createWithAccountKeyFail",
-//                     params: { address, network },
-//                 },
-//             ],
-//         });
-//         document.getElementById("accountKeyFailRes").innerText =
-//             JSON.stringify(account);
-//     } catch (err) {
-//         console.error(err.message);
-//     }
-// });
+document.getElementById("accountKeyFailButton").onclick = async () => {
+    try {
+        const account = await ethereum.request({
+            method: "wallet_invokeSnap",
+            params: [
+                snapId,
+                {
+                    method: "klay_createWithAccountKeyFail",
+                    params: { network },
+                },
+            ],
+        });
+        document.getElementById("accountKeyFailCode").innerText =
+            JSON.stringify(account);
+    } catch (err) {
+        console.error(err.message);
+    }
+};
+document.getElementById("accountKeyWeightedMultiSigButton").onclick =
+    async () => {
+        const keyWeightedMultiSig = document.getElementById(
+            "accountKeyWeightedMultiSigInput"
+        ).value;
+        const publicKeyArray = keyWeightedMultiSig.split(",");
+        try {
+            const account = await ethereum.request({
+                method: "wallet_invokeSnap",
+                params: [
+                    snapId,
+                    {
+                        method: "klay_createWithAccountKeyWeightedMultiSig",
+                        params: { network, publicKeyArray },
+                    },
+                ],
+            });
+            document.getElementById(
+                "accountKeyWeightedMultiSigCode"
+            ).innerText = JSON.stringify(account);
+        } catch (err) {
+            console.error(err.message);
+        }
+    };
 
-// const createWithAccountKeyWeightedMultiSigButton = document.querySelector(
-//     "button.createWithAccountKeyWeightedMultiSig"
-// );
-// createWithAccountKeyWeightedMultiSigButton.addEventListener(
-//     "click",
-//     async () => {
-//         const keyWeightedMultiSig = document.getElementById(
-//             "inputKeyWeightedMultiSig"
-//         ).value;
-//         const publicKeyArray = keyWeightedMultiSig.split(",");
-//         try {
-//             const account = await ethereum.request({
-//                 method: "wallet_invokeSnap",
-//                 params: [
-//                     snapId,
-//                     {
-//                         method: "klay_createWithAccountKeyWeightedMultiSig",
-//                         params: { address, network, publicKeyArray },
-//                     },
-//                 ],
-//             });
-//             document.getElementById("accountKeyWeightedMultiSigRes").innerText =
-//                 JSON.stringify(account);
-//         } catch (err) {
-//             console.error(err.message);
-//         }
-//     }
-// );
-
-// const createWithAccountKeyRoleBasedButton = document.querySelector(
-//     "button.createWithAccountKeyRoleBased"
-// );
-// createWithAccountKeyRoleBasedButton.addEventListener("click", async () => {
-//     const keyRoleBased = document.getElementById("inputKeyRoleBased").value;
-//     const roledBasedPublicKeyArray = keyRoleBased
-//         .split(";")
-//         .map((publicKeyArray) => publicKeyArray.split(","));
-//     try {
-//         const account = await ethereum.request({
-//             method: "wallet_invokeSnap",
-//             params: [
-//                 snapId,
-//                 {
-//                     method: "klay_createWithAccountKeyRoleBased",
-//                     params: { address, network, roledBasedPublicKeyArray },
-//                 },
-//             ],
-//         });
-//         document.getElementById("accountKeyRoleBasedRes").innerText =
-//             JSON.stringify(account);
-//     } catch (err) {
-//         console.error(err.message);
-//     }
-// });
+document.getElementById("accountKeyRoleBasedButton").onclick =
+    async () => {
+        const keyRoleBased = document.getElementById("accountKeyRoleBasedInput").value;
+        const roledBasedPublicKeyArray = keyRoleBased
+            .split(";")
+            .map((publicKeyArray) => publicKeyArray.split(","));
+        try {
+            const account = await ethereum.request({
+                method: "wallet_invokeSnap",
+                params: [
+                    snapId,
+                    {
+                        method: "klay_createWithAccountKeyRoleBased",
+                        params: { network, roledBasedPublicKeyArray },
+                    },
+                ],
+            });
+            document.getElementById("accountKeyRoleBasedCode").innerText =
+                JSON.stringify(account);
+        } catch (err) {
+            console.error(err.message);
+        }
+    };
 
 /* ----- Transaction ----- */
 document.getElementById("sendButton").onclick = async () => {
