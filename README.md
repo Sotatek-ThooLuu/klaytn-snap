@@ -4,11 +4,11 @@
 ![](https://img.shields.io/badge/Node.js-%3E%3D12.x-orange.svg?style=flat-square)
 ![Discord](https://img.shields.io/discord/608204864593461248?color=blue&label=Discord&logo=discord)
 
-Metamask Snap to enable Metamask users interaction with filecoin dapps.
+Metamask Snap to enable Metamask users interaction with Klaytn dapps.
 
 **For detailed documentation and integration instructions see [wiki](https://github.com/chainsafe/filsnap/wiki).**
 
-### Testing Filsnap
+### Testing Klaytn-snap
 
 #### Metamask
 
@@ -24,9 +24,9 @@ First, build and install beta release of Metamask extension:
 
 ##### Live demo
 
-Test Filsnap inside [our demo DAPP.](http://filsnap.chainsafe.io/)
+Test Klaytn-snap inside [our demo DAPP.](http://filsnap.chainsafe.io/)
 
-##### Running Filsnap demo locally
+##### Running Klaytn-snap demo locally
 
 Start our demo locally by running:
 

@@ -1,27 +1,27 @@
-import React, {createContext, Dispatch, PropsWithChildren, Reducer, useReducer} from "react";
-import {hasMetaMask, MetamaskFilecoinSnap} from "@chainsafe/filsnap-adapter";
+import React, { createContext, Dispatch, PropsWithChildren, Reducer, useReducer } from "react";
+import { hasMetaMask, MetamaskKlaytnSnap } from "../adapter";
 
-interface IFilecoinSnap {
+interface IKlaytnSnap {
     isInstalled: boolean
     message: string
-    snap?: MetamaskFilecoinSnap
+    snap?: MetamaskKlaytnSnap
 }
 
 export interface MetamaskState {
-    filecoinSnap: IFilecoinSnap,
+    KlaytnSnap: IKlaytnSnap,
     hasMetaMask: boolean,
 }
 
 const initialState: MetamaskState = {
-    filecoinSnap: {
+    KlaytnSnap: {
         isInstalled: false,
         message: ""
     },
     hasMetaMask: hasMetaMask()
 };
-type MetamaskDispatch = {type: MetamaskActions, payload: any};
+type MetamaskDispatch = { type: MetamaskActions, payload: any };
 
-export const MetaMaskContext = createContext<[MetamaskState, Dispatch<MetamaskDispatch>]>([initialState, () => {}]);
+export const MetaMaskContext = createContext<[MetamaskState, Dispatch<MetamaskDispatch>]>([initialState, () => { }]);
 
 export enum MetamaskActions {
     SET_INSTALLED_STATUS
@@ -32,7 +32,7 @@ const reducer: Reducer<MetamaskState, MetamaskDispatch> = (state, action) => {
         case MetamaskActions.SET_INSTALLED_STATUS: {
             return {
                 ...state,
-                filecoinSnap: action.payload
+                KlaytnSnap: action.payload
             }
         }
         default: {

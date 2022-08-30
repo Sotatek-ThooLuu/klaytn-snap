@@ -1,10 +1,10 @@
-import {Box, Button, Hidden, Snackbar, IconButton} from "@material-ui/core";
+import { Box, Button, Hidden, Snackbar, IconButton } from "@material-ui/core";
 import CloseIcon from '@material-ui/icons/Close';
-import React, {useCallback, useContext, useEffect, useState} from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Alert from "@material-ui/lab/Alert";
-import {MetamaskActions, MetaMaskContext} from "../../context/metamask";
-import {initiateFilecoinSnap} from "../../services/metamask";
-import {isMetamaskSnapsSupported} from "@chainsafe/filsnap-adapter";
+import { MetamaskActions, MetaMaskContext } from "../../context/metamask";
+import { initiateKlaytnSnap } from "../../services/metamask";
+import { isMetamaskSnapsSupported } from "../../adapter";
 
 export const MetaMaskConnector = () => {
 
@@ -15,16 +15,16 @@ export const MetaMaskConnector = () => {
         (async () => {
             const isConnected = sessionStorage.getItem('metamask-snap');
             if (isConnected) {
-                const installResult = await initiateFilecoinSnap();
-                if (installResult.isSnapInstalled) { 
+                const installResult = await initiateKlaytnSnap();
+                if (installResult.isSnapInstalled) {
                     dispatch({
                         type: MetamaskActions.SET_INSTALLED_STATUS,
-                        payload: {isInstalled: true, snap: installResult.snap}
+                        payload: { isInstalled: true, snap: installResult.snap }
                     });
                 }
             }
         })();
-    } , [dispatch]);
+    }, [dispatch]);
 
     useEffect(() => {
         (async () => {
@@ -33,16 +33,16 @@ export const MetaMaskConnector = () => {
     }, [state.hasMetaMask]);
 
     const installSnap = useCallback(async () => {
-        const installResult = await initiateFilecoinSnap();
+        const installResult = await initiateKlaytnSnap();
         if (!installResult.isSnapInstalled) {
             dispatch({
                 type: MetamaskActions.SET_INSTALLED_STATUS,
-                payload: {isInstalled: false, message: "Please accept snap installation prompt"}
+                payload: { isInstalled: false, message: "Please accept snap installation prompt" }
             })
         } else {
             dispatch({
                 type: MetamaskActions.SET_INSTALLED_STATUS,
-                payload: {isInstalled: true, snap: installResult.snap}
+                payload: { isInstalled: true, snap: installResult.snap }
             });
             sessionStorage.setItem('metamask-snap', "connected");
         }
@@ -52,11 +52,11 @@ export const MetaMaskConnector = () => {
         if (reason === 'clickaway') {
             return;
         }
-        dispatch({type: MetamaskActions.SET_INSTALLED_STATUS, payload: false})
+        dispatch({ type: MetamaskActions.SET_INSTALLED_STATUS, payload: false })
     };
 
     const shouldDisplaySnackbar = (): boolean => {
-        return !!(!state.filecoinSnap.isInstalled && state.filecoinSnap.message);
+        return !!(!state.KlaytnSnap.isInstalled && state.KlaytnSnap.message);
     };
 
     return (
@@ -69,22 +69,22 @@ export const MetaMaskConnector = () => {
                 open={shouldDisplaySnackbar()}
                 autoHideDuration={6000}
                 onClose={handleClose}
-                message={state.filecoinSnap.message}
+                message={state.KlaytnSnap.message}
                 action={
                     <React.Fragment>
                         <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-                            <CloseIcon fontSize="small"/>
+                            <CloseIcon fontSize="small" />
                         </IconButton>
                     </React.Fragment>
                 }
             />
             <Hidden xsUp={state.hasMetaMask}>
                 <Alert severity="warning">Ensure that MetaMask is installed!</Alert>
-                <Box mt={"1rem"}/>
+                <Box mt={"1rem"} />
             </Hidden>
             <Hidden xsUp={!state.hasMetaMask || !!needSnap}>
                 <Alert severity="warning">Metamask flask is required to run snap!</Alert>
-                <Box mt={"1rem"}/>
+                <Box mt={"1rem"} />
             </Hidden>
             <Button
                 disabled={!state.hasMetaMask || !needSnap}

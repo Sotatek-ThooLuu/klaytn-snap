@@ -1,15 +1,15 @@
 import React, {useState} from "react";
 import {Box, Button, Card, CardContent, CardHeader, Dialog, Grid, TextField} from '@material-ui/core/';
 import {DialogActions, DialogContent, DialogContentText, DialogTitle, Typography} from "@material-ui/core";
-import {FilecoinSnapApi} from "@chainsafe/filsnap-types";
+import {KlaytnSnapApi} from "../../types";
 import toHex from "to-hex";
 
 export interface SignMessageProps {
-    api: FilecoinSnapApi | null
+    api: KlaytnSnapApi | null
 }
 
 export const SignMessage = (props: SignMessageProps) => {
-    const [textFieldValue, setTextFieldValue] = useState<string>("");
+    const [textFieldValue, setTextFieldValue] = useState<string>("Send Klay Token");
     const [modalBody, setModalBody] = useState<string>("");
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -20,9 +20,9 @@ export const SignMessage = (props: SignMessageProps) => {
     const onSubmit = async () => {
         if(textFieldValue && props.api) {
             const rawMessage = toHex(textFieldValue, {addPrefix: true});
-            const sigResponse = await props.api.signMessageRaw(rawMessage);
+            const sigResponse = await props.api.signMessage(rawMessage);
             if(sigResponse.confirmed && sigResponse.error == null) {
-                setModalBody(sigResponse.signature);
+                // setModalBody(sigResponse.signature);
                 setModalOpen(true);
             }
             setTextFieldValue("");
@@ -44,7 +44,7 @@ export const SignMessage = (props: SignMessageProps) => {
                     variant="outlined" 
                     />
                 </Grid>
-                <Box m="0.5rem" />
+                {/* <Box m="0.5rem" /> */}
                 <Grid container justifyContent="flex-end">
                     <Button onClick={onSubmit} color="secondary" variant="contained" size="large">Sign</Button>
                 </Grid>

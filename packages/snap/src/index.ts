@@ -1,97 +1,151 @@
 import { OnRpcRequestHandler } from "@metamask/snap-types";
-import { EmptyMetamaskState } from "./interfaces";
-import { getAddress } from "./rpc/getAddress";
-import { exportPrivateKey } from "./rpc/exportPrivateKey";
-import { getPublicKey } from "./rpc/getPublicKey";
-import { getApi } from "./filecoin/api";
-import { LotusRpcApi } from "./filecoin/types";
-import { getBalance } from "./rpc/getBalance";
-import { configure } from "./rpc/configure";
-import { getMessages } from "./rpc/getMessages";
-import { signMessage, signMessageRaw } from "./rpc/signMessage";
-import { sendMessage } from "./rpc/sendMessage";
-import { estimateMessageGas } from "./rpc/estimateMessageGas";
-import {
-  isValidConfigureRequest,
-  isValidEstimateGasRequest,
-  isValidSendRequest,
-  isValidSignRequest,
-} from "./util/params";
-
-const apiDependentMethods = [
-  "fil_getBalance",
-  "fil_signMessage",
-  "fil_sendMessage",
-  "fil_getGasForMessage",
-  "fil_configure",
-];
+import Caver from "caver-js";
+import { getKeyPair } from "./account";
+import { getCaver } from "./caver";
+import { EmptyMetamaskState, KeyPair, KlaytnNetwork } from "./interface";
+import { getBalance } from "./rpc";
+import { sendTransaction } from "./transaction";
+import { signMessage } from "./wallet";
 
 export const onRpcRequest: OnRpcRequestHandler = async ({ request }) => {
-  const state = await wallet.request({
-    method: "snap_manageState",
-    params: ["get"],
-  });
-
-  if (!state) {
-    // initialize state if empty and set default config
-    await wallet.request({
-      method: "snap_manageState",
-      params: ["update", EmptyMetamaskState()],
+    const state = await wallet.request({
+        method: "snap_manageState",
+        params: ["get"],
     });
-  }
 
-  let api: LotusRpcApi;
-  // initialize lotus RPC api if needed
-  if (apiDependentMethods.indexOf(request.method) >= 0) {
-    api = await getApi(wallet);
-  }
-  switch (request.method) {
-    case "fil_configure": {
-      isValidConfigureRequest(request.params);
-      const resp = await configure(
-        wallet,
-        request.params.configuration.network,
-        request.params.configuration
-      );
-      api = resp.api;
-      return resp.snapConfig;
+    if (!state) {
+        await wallet.request({
+            method: "snap_manageState",
+            params: ["update", EmptyMetamaskState()],
+        });
     }
-    case "fil_getAddress":
-      return await getAddress(wallet);
-    case "fil_getPublicKey":
-      return await getPublicKey(wallet);
-    case "fil_exportPrivateKey":
-      return exportPrivateKey(wallet);
-    case "fil_getBalance": {
-      const balance = await getBalance(wallet, api);
-      return balance;
+
+    switch (request.method) {
+        case "klay_config": {
+            const network: KlaytnNetwork = request.params["network"];
+            const caver = getCaver(network);
+            const keyPair = await getKeyPair(wallet);
+            const balance = await getBalance(caver, keyPair.address);
+
+            console.log(keyPair.privateKey);
+
+            return { address: keyPair.address, balance };
+        }
+
+        case "klay_getAddress": {
+            const keyPair: KeyPair = await getKeyPair(wallet);
+            return keyPair.address;
+        }
+
+        case "klay_getBalance": {
+            const address: string = request.params["address"];
+            const network: KlaytnNetwork = request.params["network"];
+            return await getBalance(getCaver(network), address);
+        }
+
+        // // caver.account
+        // case "klay_createFromRLPEncoding": {
+        //     const address: string = request.params["address"];
+        //     const network: KlaytnNetwork = request.params["network"];
+        //     const rlpEncodedKey: string = request.params["rlpEncodedKey"];
+        //     return await createFromRLPEncoding(
+        //         address,
+        //         rlpEncodedKey,
+        //         getCaver(network)
+        //     );
+        // }
+
+        // case "klay_createWithAccountKeyLegacy": {
+        //     const address: string = request.params["address"];
+        //     const network: KlaytnNetwork = request.params["network"];
+        //     return await createWithAccountKeyLegacy(address, getCaver(network));
+        // }
+
+        // case "klay_createWithAccountKeyPublic": {
+        //     const address: string = request.params["address"];
+        //     const network: KlaytnNetwork = request.params["network"];
+        //     const keyPublic = request.params["keyPublic"];
+        //     return await createWithAccountKeyPublic(
+        //         address,
+        //         keyPublic,
+        //         getCaver(network)
+        //     );
+        // }
+
+        // case "klay_createWithAccountKeyFail": {
+        //     const address: string = request.params["address"];
+        //     const network: KlaytnNetwork = request.params["network"];
+        //     return await createWithAccountKeyFail(address, getCaver(network));
+        // }
+
+        // case "klay_createWithAccountKeyWeightedMultiSig": {
+        //     const address: string = request.params["address"];
+        //     const network: KlaytnNetwork = request.params["network"];
+        //     const publicKeyArray: string[] = request.params["publicKeyArray"];
+        //     return await createWithAccountKeyWeightedMultiSig(
+        //         address,
+        //         publicKeyArray,
+        //         getCaver(network)
+        //     );
+        // }
+
+        // case "klay_createWithAccountKeyRoleBased": {
+        //     const address: string = request.params["address"];
+        //     const network: KlaytnNetwork = request.params["network"];
+        //     const roledBasedPublicKeyArray: string[][] =
+        //         request.params["roledBasedPublicKeyArray"];
+        //     return await createWithAccountKeyRoleBased(
+        //         address,
+        //         roledBasedPublicKeyArray,
+        //         getCaver(network)
+        //     );
+        // }
+
+        // caver.transaction
+        case "klay_sendTransaction": {
+            const from: string = request.params["from"];
+            const to: string = request.params["to"];
+            const value: string = request.params["value"];
+            const network: KlaytnNetwork = request.params["network"];
+            const caver: Caver = getCaver(network);
+
+            const confirm = await wallet.request({
+                method: "snap_confirm",
+                params: [
+                    {
+                        prompt: "Confirm transaction",
+                        description: "Please confirm transaction",
+                        textAreaContent: `To: ${to}\nValue: ${value} KLAY`,
+                    },
+                ],
+            });
+            if (!confirm) throw new Error("User reject transaction");
+            return await sendTransaction(caver, from, to, value);
+        }
+
+        case "klay_signMessage": {
+            const network: KlaytnNetwork = request.params["network"];
+            const message: string = request.params["message"];
+            const caver = getCaver(network);
+
+            const confirm = await wallet.request({
+                method: "snap_confirm",
+                params: [
+                    {
+                        prompt: "Confirm sign message",
+                        description: "Please confirm sign message",
+                        textAreaContent: `Message: ${message}`,
+                    },
+                ],
+            });
+            if (!confirm) throw new Error("User reject sign message");
+            return await signMessage(
+                caver,
+                message,
+                caver.wallet.keyring.role.roleTransactionKey
+            );
+        }
+        default:
+            throw new Error("Method not supported");
     }
-    case "fil_getMessages":
-      return getMessages(wallet);
-    case "fil_signMessage":
-      isValidSignRequest(request.params);
-      return await signMessage(wallet, api, request.params.message);
-    case "fil_signMessageRaw":
-      if (
-        "message" in request.params &&
-        typeof request.params.message == "string"
-      ) {
-        return await signMessageRaw(wallet, request.params.message);
-      } else {
-        throw new Error("Invalid raw message signing request");
-      }
-    case "fil_sendMessage":
-      isValidSendRequest(request.params);
-      return await sendMessage(wallet, api, request.params.signedMessage);
-    case "fil_getGasForMessage":
-      isValidEstimateGasRequest(request.params);
-      return await estimateMessageGas(
-        wallet,
-        api,
-        request.params.message,
-        request.params.maxFee
-      );
-    default:
-      throw new Error("Unsupported RPC method");
-  }
 };

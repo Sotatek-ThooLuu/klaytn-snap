@@ -1,26 +1,22 @@
 {
-  "version": "2.3.9",
-  "proposedName": "Filsnap",
-  "description": "The Filecoin snap.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Chainsafe/filsnap.git"
-  },
+  "version": "1.0.0",
+  "description": "The Klaytn Snap.",
+  "proposedName": "klaytnsnap",
   "source": {
-    "shasum": "a3CXQvJp2vz7Hp24PDJY2wnXAbwjNQl8I7seM0ZbMKE=",
+    "shasum": "l9R7ELo0NS+6wybAJv4Ctq4KAawep1vQSMZd0OnGPYk=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
-        "packageName": "@chainsafe/filsnap",
-        "registry": "https://registry.npmjs.org/"
+        "packageName": "klaytnsnap",
+        "registry": "https://registry.npmjs.org",
+        "iconPath": "images/icon.svg"
       }
     }
   },
   "initialPermissions": {
     "endowment:network-access": {},
     "snap_confirm": {},
-    "snap_getBip44Entropy_1": {},
-    "snap_getBip44Entropy_461": {},
+    "snap_getBip44Entropy_8217": {},
     "snap_manageState": {}
   },
   "manifestVersion": "0.1"

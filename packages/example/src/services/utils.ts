@@ -1,11 +1,15 @@
-import { FilecoinNumber } from '@glif/filecoin-number'
+
+
+// import { KlaytnNumber } from '@glif/Klaytn-number'
 
 export const filToAttoFil = (filValue: string): string => {
-  const filecoinNumber = new FilecoinNumber(filValue, 'fil')
-  return filecoinNumber.toAttoFil()
+  // const KlaytnNumber = new KlaytnNumber(filValue, 'fil')
+  // return KlaytnNumber.toAttoFil()
+  return filValue
 }
 
 export const attoFilToFil = (attoFilValue: string): string => {
-  const filecoinNumber = new FilecoinNumber(attoFilValue, 'attofil')
-  return filecoinNumber.toFil()
+  // const KlaytnNumber = new KlaytnNumber(attoFilValue, 'attofil')
+  // return KlaytnNumber.toFil()
+  return attoFilValue
 }
