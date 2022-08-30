@@ -94,6 +94,7 @@ export const Dashboard = () => {
         return () => clearInterval(interval);
     }, [api, balance, setBalance, setBalanceChange, address]);
 
+    console.log(state.KlaytnSnap.isInstalled)
     return (
         <Container maxWidth="lg">
             <Grid direction="column" alignItems="center" justifyContent="center" container spacing={3}>
@@ -105,11 +106,11 @@ export const Dashboard = () => {
                         Klaytn-snap enables Klaytn network inside Metamask.
                     </Typography>
                 </Box>
-                <Hidden xsUp={state.KlaytnSnap.isInstalled}>
+                <Box sx={{ display: state.KlaytnSnap.isInstalled ? "none" : "block"}}>
                     <MetaMaskConnector />
                     <Footer />
-                </Hidden>
-                <Hidden xsUp={!state.KlaytnSnap.isInstalled}>
+                </Box>
+                <Box sx={{ display: !state.KlaytnSnap.isInstalled ? "none" : "block", width: '100%' }}>
                     {/* <Box m="1rem" alignSelf="baseline">
                         <InputLabel>Network</InputLabel>
                         <Select
@@ -151,7 +152,7 @@ export const Dashboard = () => {
                             </Card>
                         </Grid>
                     </Grid> */}
-                </Hidden>
+                </Box>
             </Grid>
         </Container>
     );

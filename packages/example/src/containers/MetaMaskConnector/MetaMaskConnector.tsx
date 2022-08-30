@@ -1,4 +1,4 @@
-import { Box, Button, Hidden, Snackbar, IconButton } from "@material-ui/core";
+import { Box, Button, Snackbar, IconButton } from "@material-ui/core";
 import CloseIcon from '@material-ui/icons/Close';
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import Alert from "@material-ui/lab/Alert";
@@ -78,14 +78,14 @@ export const MetaMaskConnector = () => {
                     </React.Fragment>
                 }
             />
-            <Hidden xsUp={state.hasMetaMask}>
+            <Box sx={{ display: state.hasMetaMask ? "none" : "block", width: '100%' }}>
                 <Alert severity="warning">Ensure that MetaMask is installed!</Alert>
                 <Box mt={"1rem"} />
-            </Hidden>
-            <Hidden xsUp={!state.hasMetaMask || !!needSnap}>
+            </Box>
+            <Box sx={{ display: !state.hasMetaMask || !!needSnap ? "none" : "block", width: '100%' }}>
                 <Alert severity="warning">Metamask flask is required to run snap!</Alert>
                 <Box mt={"1rem"} />
-            </Hidden>
+            </Box>
             <Button
                 disabled={!state.hasMetaMask || !needSnap}
                 onClick={installSnap}

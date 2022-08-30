@@ -24,7 +24,6 @@
     "demo:local": "concurrently  --raw --kill-others \"yarn run start:snap\" \"yarn run start:example\""
   },
   "devDependencies": {
-    "@chainsafe/eslint-config": "^1.0.0",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/eslint": "^7",
     "@types/mocha": "^9.1.1",

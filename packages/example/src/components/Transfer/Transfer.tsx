@@ -152,13 +152,13 @@ export const Transfer: React.FC<ITransferProps> = ({ network, api, onNewMessageC
                         <TextField
                             onChange={handleRecipientChange} size="medium" fullWidth id="recipient" label="Recipient" variant="outlined" value={recipient}>
                         </TextField>
-                        {/* <Box m="0.5rem" /> */}
+                        <Box m="0.5rem" />
                         <TextField
                             InputProps={{ startAdornment: <InputAdornment position="start">KLAY</InputAdornment> }}
                             onChange={handleAmountChange} size="medium" fullWidth id="amount" label="Amount" variant="outlined" value={amount}>
                         </TextField>
-                        {/* <Box m="0.5rem" />
-                        <TextField
+                        <Box m="0.5rem" />
+                        {/*   <TextField
                             InputProps={{ startAdornment: <InputAdornment position="start">FIL</InputAdornment> }}
                             onChange={handleGasLimitChange} size="medium" fullWidth id="gaslimit" label="Gas Limit" variant="outlined" value={gasLimit}>
                         </TextField>

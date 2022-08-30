@@ -1,7 +1,7 @@
-import React, {useState} from "react";
-import {Box, Button, Card, CardContent, CardHeader, Dialog, Grid, TextField} from '@material-ui/core/';
-import {DialogActions, DialogContent, DialogContentText, DialogTitle, Typography} from "@material-ui/core";
-import {KlaytnSnapApi} from "../../types";
+import React, { useState } from "react";
+import { Box, Button, Card, CardContent, CardHeader, Dialog, Grid, TextField } from '@material-ui/core/';
+import { DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@material-ui/core";
+import { KlaytnSnapApi } from "../../types";
 import toHex from "to-hex";
 
 export interface SignMessageProps {
@@ -15,13 +15,15 @@ export const SignMessage = (props: SignMessageProps) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTextFieldValue(event.target.value);
-      };
+    };
 
     const onSubmit = async () => {
-        if(textFieldValue && props.api) {
-            const rawMessage = toHex(textFieldValue, {addPrefix: true});
+        if (textFieldValue && props.api) {
+            const rawMessage = textFieldValue || toHex(textFieldValue, { addPrefix: true });
+            console.log({ rawMessage })
             const sigResponse = await props.api.signMessage(rawMessage);
-            if(sigResponse.confirmed && sigResponse.error == null) {
+            console.log({ sigResponse })
+            if (sigResponse.confirmed && sigResponse.error == null) {
                 // setModalBody(sigResponse.signature);
                 setModalOpen(true);
             }
@@ -30,21 +32,21 @@ export const SignMessage = (props: SignMessageProps) => {
     };
 
     return (
-        <Card style={{height: "100%"}}>
-            <CardHeader title="Sign custom message"/>
+        <Card style={{ height: "100%" }}>
+            <CardHeader title="Sign custom message" />
             <CardContent>
                 <Grid container>
-                    <TextField 
-                    onChange={handleChange} 
-                    value={textFieldValue} 
-                    size="medium" 
-                    fullWidth 
-                    id="custom-message"
-                    label="Message" 
-                    variant="outlined" 
+                    <TextField
+                        onChange={handleChange}
+                        value={textFieldValue}
+                        size="medium"
+                        fullWidth
+                        id="custom-message"
+                        label="Message"
+                        variant="outlined"
                     />
                 </Grid>
-                {/* <Box m="0.5rem" /> */}
+                <Box m="0.5rem" />
                 <Grid container justifyContent="flex-end">
                     <Button onClick={onSubmit} color="secondary" variant="contained" size="large">Sign</Button>
                 </Grid>
@@ -58,7 +60,7 @@ export const SignMessage = (props: SignMessageProps) => {
                 <DialogTitle id="alert-dialog-title">{"Message signature"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        This is signature of your message:<br/>
+                        This is signature of your message:<br />
                         <Typography style={{ wordWrap: "break-word" }}>{modalBody}</Typography>
                     </DialogContentText>
                 </DialogContent>
