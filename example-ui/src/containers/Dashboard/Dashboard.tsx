@@ -17,6 +17,7 @@ import {
 import { SignMessage } from "../../components/SignMessage/SignMessage";
 import { Transfer } from "../../components/Transfer/Transfer";
 import Footer from "../../Footer";
+import { AccountDetails } from "../../components/Account/AccountDetails";
 
 export const Dashboard = () => {
 
@@ -122,13 +123,19 @@ export const Dashboard = () => {
                     </Box> */}
                     <Grid container spacing={3} alignItems="stretch">
                         <Grid item xs={12}>
-                            <Account
+                            <AccountDetails
                                 address={address}
                                 balance={balance + " KLAY"}
                                 // publicKey={publicKey}
                                 api={api}
                                 balanceChange={balanceChange}
                             />
+                        </Grid>
+                    </Grid>
+                    <Box m="1rem" />
+                    <Grid container spacing={3} alignItems="stretch">
+                        <Grid item xs={12}>
+                            <Account network={network} api={api} />
                         </Grid>
                     </Grid>
                     <Box m="1rem" />
