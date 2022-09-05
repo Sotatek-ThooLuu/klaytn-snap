@@ -1,7 +1,5 @@
-import React from "react";
-import { Box, Button, Card, CardContent, CardHeader, Divider, Grid, Typography } from '@material-ui/core/';
+import { Box, Card, CardContent, CardHeader, Divider, Grid, Typography } from '@material-ui/core/';
 import { KlaytnSnapApi } from "../../types";
-import { ExpandCard } from "../common/Expand/ExpandCard";
 
 export interface AccountDetailsProps {
     address: string,
@@ -21,7 +19,8 @@ export const AccountDetails = (props: AccountDetailsProps) => {
     // };
 
     return (
-        <ExpandCard title="Account details" defaultExpand={true}>
+        <Card>
+            <CardHeader title="Instructions" />
             <CardContent>
                 <Grid container alignItems="center">
                     <Grid item md={6} xs={12}>
@@ -44,6 +43,6 @@ export const AccountDetails = (props: AccountDetailsProps) => {
                 <Button color="secondary" variant={"contained"} onClick={handleExport}>Export private key</Button>
             </Grid> */}
             </CardContent>
-        </ExpandCard>
+        </Card>
     );
 };

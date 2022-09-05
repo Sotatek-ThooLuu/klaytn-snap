@@ -17,5 +17,5 @@ export declare function createFromRLPEncoding(this: MetamaskKlaytnSnap, params: 
 export declare function createWithAccountKeyFail(this: MetamaskKlaytnSnap, params: { network: string }): Promise<any>;
 export declare function createWithAccountKeyLegacy(this: MetamaskKlaytnSnap, params: { network: string }): Promise<any>;
 export declare function createWithAccountKeyPublic(this: MetamaskKlaytnSnap, params: { network: string, keyPublic: string }): Promise<any>;
-export declare function createWithAccountKeyWeightedMultiSig(this: MetamaskKlaytnSnap, params: { network: string, publicKeyArray: string[] }): Promise<any>;
-export declare function createWithAccountKeyRoleBased(this: MetamaskKlaytnSnap, params: { network: string, roledBasedPublicKeyArray: string[] }): Promise<any>;
+export declare function createWithAccountKeyWeightedMultiSig(this: MetamaskKlaytnSnap, params: { network: string, publicKeyArray: (string | string[])[] }): Promise<any>;
+export declare function createWithAccountKeyRoleBased(this: MetamaskKlaytnSnap, params: { network: string, roledBasedPublicKeyArray: (string | string[])[] }): Promise<any>;

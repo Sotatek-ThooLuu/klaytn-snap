@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import {
     Box,
     Button,
-    Card,
     CardContent,
     CardHeader,
     Grid,
@@ -12,7 +11,6 @@ import {
 } from '@material-ui/core/';
 import { Alert } from "@material-ui/lab";
 import { KlaytnSnapApi } from "../../types";
-import { ExpandCard } from "../common/Expand/ExpandCard";
 
 interface ITransferProps {
     network: string,
@@ -106,7 +104,8 @@ export const Transfer: React.FC<ITransferProps> = ({ network, api, onNewMessageC
         onNewMessageCallback]);
 
     return (
-        <ExpandCard title="Transfer">
+        <>
+            <CardHeader title="Transfer" />
             <CardContent>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12}>
@@ -158,6 +157,6 @@ export const Transfer: React.FC<ITransferProps> = ({ network, api, onNewMessageC
                     </Alert>
                 </Snackbar>
             </CardContent>
-        </ExpandCard>
+        </>
     );
 };

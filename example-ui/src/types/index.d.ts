@@ -287,8 +287,8 @@ export interface KlaytnSnapApi {
   createWithAccountKeyFail(params: { network: string }): Promise<any>;
   createWithAccountKeyLegacy(params: { network: string }): Promise<any>;
   createWithAccountKeyPublic(params: { network: string, keyPublic: string }): Promise<any>;
-  createWithAccountKeyWeightedMultiSig(params: { network: string, publicKeyArray: string[] }): Promise<any>;
-  createWithAccountKeyRoleBased(params: { network: string, roledBasedPublicKeyArray: string[] }): Promise<any>;
+  createWithAccountKeyWeightedMultiSig(params: { network: string, publicKeyArray: (string | string[])[] }): Promise<any>;
+  createWithAccountKeyRoleBased(params: { network: string, roledBasedPublicKeyArray: (string | string[])[] }): Promise<any>;
 }
 
 export interface KeyPair {
