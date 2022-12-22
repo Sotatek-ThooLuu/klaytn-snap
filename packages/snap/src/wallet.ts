@@ -88,7 +88,8 @@ export async function signMessage(
     });
 
     if (!confirm) throw new Error("User rejected transaction");
-    return caver.wallet.signMessage(keyPair.address, message, role, index);
+    const result = caver.wallet.signMessage(keyPair.address, message, role, index);
+    return JSON.parse(JSON.stringify(result)); 
 }
 
 export async function sign(

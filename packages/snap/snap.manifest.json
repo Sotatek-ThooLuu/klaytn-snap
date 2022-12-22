@@ -3,7 +3,7 @@
   "description": "The Klaytn Snap.",
   "proposedName": "klaytn-snap",
   "source": {
-    "shasum": "hBfUL/YSYysAbULx6pr138wEV9MLbkFmuHq04CDEpTw=",
+    "shasum": "G7Kj/cJt1S8XZ+HRpXarn2dBeKEkB4ElxpzeEdc1fKE=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -16,7 +16,11 @@
   "initialPermissions": {
     "endowment:network-access": {},
     "snap_confirm": {},
-    "snap_getBip44Entropy_8217": {},
+    "snap_getBip44Entropy": [
+      {
+        "coinType": 8217
+      }
+    ],
     "snap_manageState": {}
   },
   "manifestVersion": "0.1"

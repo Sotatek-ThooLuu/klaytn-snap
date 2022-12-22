@@ -14,15 +14,21 @@ export async function getKeyPair(): Promise<KeyPair> {
     const derivationPath = state.klaytn.derivationPath;
     const [, , coinType, account, change, addressIndex] =
         derivationPath.split("/");
-    const bip44Code = coinType.replace("'", "");
+    const bip44Code = Number(coinType.replace("'", ""));
+    console.log(`-bip44:`, bip44Code)
     const bip44Node = (await wallet.request({
-        method: `snap_getBip44Entropy_${bip44Code}`,
+        method: 'snap_getBip44Entropy',
+        params: {
+            coinType: bip44Code,
+        },
     })) as JsonBIP44CoinTypeNode;
 
     const addressKeyDeriver = await getBIP44AddressKeyDeriver(bip44Node, {
         account: parseInt(account),
         change: parseInt(change),
     });
+    console.log(`=25`, addressKeyDeriver)
+
     const addressKey = await addressKeyDeriver(parseInt(addressIndex));
 
     return {
