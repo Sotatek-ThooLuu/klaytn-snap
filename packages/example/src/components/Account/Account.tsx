@@ -125,7 +125,7 @@ export const Account = ({ api, network }: AccountProps) => {
                 <Box m="2rem" />
                 <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
                     <Grid item xs={10}>
-                        <Typography variant="subtitle1" component="h3">Create From RLP Encoding</Typography>
+                        <Typography variant="subtitle1" component="h3">Create With Account Key Legacy</Typography>
                     </Grid>
                     <Grid item xs={2}>
                         <Grid container justifyContent="center">

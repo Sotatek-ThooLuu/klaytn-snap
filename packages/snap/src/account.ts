@@ -49,7 +49,21 @@ export async function createFromRLPEncoding(
 ): Promise<Account> {
     const caver: Caver = getCaver(network);
     const address: string = await getAddress();
-    return caver.account.createFromRLPEncoding(address, rlpEncodedKey);
+    const confirm = await wallet.request({
+        method: "snap_confirm",
+        params: [
+            {
+                prompt: "Confirm",
+                description: "Creates an Account instance from RLP-encoded AccountKey.",
+                textAreaContent: `Creates an Account instance from RLP-encoded AccountKey with this rlpEncodedKey?
+                ${rlpEncodedKey}`,
+            },
+        ],
+    });
+
+    if (!confirm) throw new Error("User rejected transaction");
+    const result = caver.account.createFromRLPEncoding(address, rlpEncodedKey);
+    return JSON.parse(JSON.stringify(result)); 
 }
 
 export async function createWithAccountKeyFail(
@@ -65,7 +79,20 @@ export async function createWithAccountKeyLegacy(
 ): Promise<Account> {
     const caver: Caver = getCaver(network);
     const address: string = await getAddress();
-    return caver.account.createWithAccountKeyLegacy(address);
+    const confirm = await wallet.request({
+        method: "snap_confirm",
+        params: [
+            {
+                prompt: "Confirm",
+                description: "Creates an Account instance which has AccountKeyLegacy as an accountKey.",
+                textAreaContent: `Creates an Account instance which has AccountKeyLegacy as an accountKey with this address?`,
+            },
+        ],
+    });
+
+    if (!confirm) throw new Error("User rejected transaction");
+    const result = caver.account.createWithAccountKeyLegacy(address);
+    return JSON.parse(JSON.stringify(result)); 
 }
 
 export async function createWithAccountKeyPublic(
@@ -74,7 +101,21 @@ export async function createWithAccountKeyPublic(
 ): Promise<Account> {
     const caver: Caver = getCaver(network);
     const address: string = await getAddress();
-    return caver.account.createWithAccountKeyPublic(address, publicKey);
+    const confirm = await wallet.request({
+        method: "snap_confirm",
+        params: [
+            {
+                prompt: "Confirm",
+                description: "Creates an Account instance which has AccountKeyPublic as an accountKey.",
+                textAreaContent: `Creates an Account instance which has AccountKeyPublic as an accountKey with following parameters?
+                - public key: ${publicKey}`,
+            },
+        ],
+    });
+
+    if (!confirm) throw new Error("User rejected transaction");
+    const result = caver.account.createWithAccountKeyPublic(address, publicKey);
+    return JSON.parse(JSON.stringify(result)); 
 }
 
 export async function createWithAccountKeyRoleBased(
